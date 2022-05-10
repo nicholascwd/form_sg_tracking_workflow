@@ -1,0 +1,19 @@
+org: niccdev
+console: true
+service: form-notification
+useDotenv: true
+provider:
+  name: aws
+  runtime: nodejs14.x
+  stage: dev
+  region: ap-southeast-1
+  memorySize: 128
+functions:
+  app:
+    handler: index.handler
+    events:
+      - http: ANY /
+      - http: 'ANY /{proxy+}'
+plugins:
+  - serverless-offline
+  - serverless-dotenv-plugin
