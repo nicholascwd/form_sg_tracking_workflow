@@ -1,5 +1,5 @@
 org: niccdev
-console: true
+console: false
 service: form-notification
 useDotenv: true
 provider:
