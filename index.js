@@ -2,6 +2,7 @@ const serverless = require("serverless-http");
 const express = require("express");
 const { saveSubmission } = require("./saveSubmission");
 const { acknowledge } = require("./acknowledge");
+const { sendPrmReminder } = require("./prmReminder");
 const app = express();
 
 app.get("/test", async function (req, res) {
@@ -144,5 +145,14 @@ app.post(
     }
   }
 );
+
+app.get("/prmreminder", async function (req, res, next) {
+  if (req.query.token == process.env.REMINDER_TOKEN) {
+    await sendPrmReminder();
+  } else {
+    return res.sendStatus(401);
+  }
+  return res.sendStatus(200);
+});
 
 module.exports.handler = serverless(app);

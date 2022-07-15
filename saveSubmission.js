@@ -49,10 +49,7 @@ async function saveSubmission(header, responses) {
   };
 
   try {
-    console.log('put form data')
-    // console.log(params_form_data)
     await docClient.put(params_form_data).promise();
-    console.log('form data putted')
   } catch (err) {
     console.error(err);
   }
@@ -66,8 +63,6 @@ async function saveSubmission(header, responses) {
   };
 
   try {
-    console.log('put station oic')
-    // console.log(params_station_oic)
     await docClient.put(params_station_oic).promise();
   } catch (err) {
     console.error(err);
