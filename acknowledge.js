@@ -92,15 +92,16 @@ async function acknowledge(responses, mode) {
     await sendEmail(prmEmailBody);
   }
 
-  const oic_emails = await getOicEmails(station);
-  const oic_email_list = oic_emails.split(";");
-  const html_table = await retrieveOutstandingCases(station);
+  if (process.env.FEATURE_FLAG_DIGESTMODE != "digest") {
+    const oic_emails = await getOicEmails(station);
+    const oic_email_list = oic_emails.split(";");
+    const html_table = await retrieveOutstandingCases(station);
 
-  const emailRes = await Promise.allSettled(
-    oic_email_list.map((i) => {
-      const body_oic_email = {
-        subject: `Status of Heartsave submission ${incident_number} updated`,
-        body: `<p>Dear OICs,</p>
+    const emailRes = await Promise.allSettled(
+      oic_email_list.map((i) => {
+        const body_oic_email = {
+          subject: `Status of Heartsave submission ${incident_number} updated`,
+          body: `<p>Dear OICs,</p>
       <br>
       Status updated: ${mode} has submitted Incident: ${incident_number}
       <br>
@@ -110,15 +111,16 @@ async function acknowledge(responses, mode) {
       ${html_table}
       <br>
       --- Heartsave Tracking System`,
-        recipient: i,
-        from: process.env.SENDER_FROM_EMAIL,
-        reply_to: process.env.REPLY_TO_EMAIL,
-      };
-      return sendEmail(body_oic_email);
-    })
-  );
+          recipient: i,
+          from: process.env.SENDER_FROM_EMAIL,
+          reply_to: process.env.REPLY_TO_EMAIL,
+        };
+        return sendEmail(body_oic_email);
+      })
+    );
 
-  console.log(emailRes);
+    console.log(emailRes);
+  }
 }
 
 module.exports = {

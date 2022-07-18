@@ -3,6 +3,7 @@ const express = require("express");
 const { saveSubmission } = require("./saveSubmission");
 const { acknowledge } = require("./acknowledge");
 const { sendPrmReminder } = require("./prmReminder");
+const { sendOicDigest } = require("./oicDigest");
 const app = express();
 
 app.get("/test", async function (req, res) {
@@ -149,10 +150,19 @@ app.post(
 app.get("/prmreminder", async function (req, res, next) {
   if (req.query.token == process.env.REMINDER_TOKEN) {
     await sendPrmReminder();
+    return res.sendStatus(200)
   } else {
     return res.sendStatus(401);
   }
-  return res.sendStatus(200);
+});
+
+app.get("/oicdigest", async function (req, res, next) {
+  if (req.query.token == process.env.REMINDER_TOKEN) {
+    await sendOicDigest();
+    return res.sendStatus(200)
+  } else {
+    return res.sendStatus(401);
+  }
 });
 
 module.exports.handler = serverless(app);

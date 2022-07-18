@@ -68,14 +68,15 @@ async function saveSubmission(header, responses) {
     console.error(err);
   }
 
-  const oic_email_list = oic_emails.split(";");
-  const html_table = await retrieveOutstandingCases(station);
+  if (process.env.FEATURE_FLAG_DIGESTMODE != "digest") {
+    const oic_email_list = oic_emails.split(";").map((x) => x.trim());
+    const html_table = await retrieveOutstandingCases(station);
 
-  const emailRes = await Promise.allSettled(
-    oic_email_list.map((i) => {
-      const body_oic_email = {
-        subject: `New Heartsave Incident ${station} ${incident_number} by PRM ${prm_name}`,
-        body: `<p>Dear OICs,</p>
+    const emailRes = await Promise.allSettled(
+      oic_email_list.map((i) => {
+        const body_oic_email = {
+          subject: `New Heartsave Incident ${station} ${incident_number} by PRM ${prm_name}`,
+          body: `<p>Dear OICs,</p>
       New Heartsave incident:
       <br><br>
       Incident Number: ${incident_number} <br>
@@ -88,16 +89,16 @@ async function saveSubmission(header, responses) {
       ${html_table}
       <br>
       --- Heartsave Tracking System`,
-        recipient: i,
-        from: process.env.SENDER_FROM_EMAIL,
-        reply_to: process.env.REPLY_TO_EMAIL,
-      };
-      return sendEmail(body_oic_email);
-    })
-  );
+          recipient: i,
+          from: process.env.SENDER_FROM_EMAIL,
+          reply_to: process.env.REPLY_TO_EMAIL,
+        };
+        return sendEmail(body_oic_email);
+      })
+    );
 
-  console.log(emailRes);
-
+    console.log(emailRes);
+  }
   const body_prm_email = {
     subject: `New Heartsave Incident ${station} ${incident_number} by PRM ${prm_name}`,
     body: `<p>Dear PRM,</p>
